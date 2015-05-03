@@ -58,4 +58,5 @@ MovieAPI::Application.routes.draw do
   # movie list
   match "api/list" => "movies#list"
   match "api/movie" => "movies#openMovie"
+  match "api/auth" => "movies#auth"
 end

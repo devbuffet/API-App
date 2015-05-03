@@ -66,6 +66,17 @@ class MoviesController < ApplicationController
 
 end
 
+# authentication
+def auth
+	username = params[:username]
+	password = params[:password]
+
+	auth = [(username == ENV['username'] && password == ENV['password'] ? true : false)]
+
+	# return json
+	render json: JSON.pretty_generate(auth)
+end
+
 def openMovie
 	# qualification system
 	@movie = params[:url]
