@@ -66,6 +66,43 @@ class MoviesController < ApplicationController
 
 end
 
+def openMovie
+	# qualification system
+	@movie = params[:url]
+
+	arrMovies = [] 
+
+	# fetch document
+	doc = returnWebDocument(params[:url])
+
+	@title = doc.css('title').text  
+
+		doc.search('table').each do |row|
+
+			if (row.to_s.start_with? '<table cellspacing="0" cellpadding="0" width="175">')
+				row.search('a').each do |item| 
+					if (!item['href'].include? 'zmovie') && (!item['href'].include? 'javascript') 
+						# bottom block goes here...
+						mtch = row.to_s.match(/([0-9]+% said good)/)
+	 					if !mtch.nil?
+	 						# this link is good....
+	 						value_nb = mtch[0].match(/([0-9]+)/)
+	 						if value_nb[0].to_i >= 50
+								# qualifies...
+								objMovieRating = MovieRating.new(item['href'],value_nb[0].to_i)
+								arrMovies.push(objMovieRating)
+							end
+	 					end
+					end
+				end
+			end
+		end	
+		# set instance variable for view
+		@arrMovies = arrMovies.sort_by {|obj| obj.rating}.reverse
+
+		render json: JSON.pretty_generate(@arrMovies)
+	end
+
 # define movie class
 class Movie
    attr_accessor :title, :href, :img_src
@@ -73,6 +110,8 @@ class Movie
       @title = title
       @href = href
       @img_src = img_src
+      @links = nil
+      @status = nil
    end
 end
 

@@ -57,4 +57,5 @@ MovieAPI::Application.routes.draw do
   # match ':controller(/:action(/:id))(.:format)'
   # movie list
   match "api/list" => "movies#list"
+  match "api/movie" => "movies#openMovie"
 end
